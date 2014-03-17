@@ -10,16 +10,32 @@ uses
 type
   EYPUDException = class(Exception);
 
+  TYPUDEntityState = (esInsert, esUpdate, esDelete, esBrowse);
+
   { TYPUDBaseEntity }
 
   TYPUDBaseEntity = class
   protected
-
+    function InsertSQL: String; abstract;
+    function UpdateSQL: String; abstract;
+    function DeleteSQL: String; abstract;
+    procedure SetupParams; abstract;
   private
+    FConnection: TSQLConnection;
     FId: Int64;
+    FQuery: TSQLQuery;
+    FState: TYPUDEntityState;
+    FTransaction: TSQLTransaction;
   public
+    constructor Create;
+    destructor Destroy; override;
+
+    property Query: TSQLQuery read FQuery write FQuery;
+    property Transaction: TSQLTransaction read FTransaction write FTransaction;
+    property Connection: TSQLConnection read FConnection write FConnection;
     procedure Validate;  virtual;
     procedure Save; virtual;
+    property State: TYPUDEntityState read FState write FState;
   published
     property Id: Int64 read FId write FId;
   end;
@@ -28,37 +44,45 @@ implementation
 
 { TYPUDBaseEntity }
 
+constructor TYPUDBaseEntity.Create;
+begin
+  FTransaction := TSQLTransaction.Create(nil);
+  FQuery := TSQLQuery.Create(nil);
+  FConnection := dbutils.Connection;
+  FTransaction.DataBase := FConnection;
+  FQuery.Transaction := FTransaction;
+  FQuery.DataBase := FConnection;
+end;
+
+destructor TYPUDBaseEntity.Destroy;
+begin
+  FQuery.Free;
+  FTransaction.Free;
+  FConnection.Free;
+  inherited Destroy;
+end;
+
 procedure TYPUDBaseEntity.Validate;
 begin
   //
 end;
 
 procedure TYPUDBaseEntity.Save;
-var
-  q: TSQLQuery;
-  t: TSQLTransaction;
-  c: TSQLConnection;
 begin
   Validate;
-  t := TSQLTransaction.Create(nil);
-  q := TSQLQuery.Create(nil);
+  case State of
+    esInsert : Query.SQL.Text := InsertSQL;
+    esUpdate : Query.SQL.Text := UpdateSQL;
+    esDelete : Query.SQL.Text := DeleteSQL;
+    esBrowse := ;
+  end;
+  SetupParams;
   try
-    c := dbutils.Connection;
-    t.DataBase := c;
-    q.Transaction := t;
-    q.DataBase := c;
-    q.SQL.Text := 'insert into person (name) values (:name)';
-    q.Params.ParamByName('name').AsString := FName;
-    try
-      q.ExecSQL;
-      t.Commit;
-    except
-      t.Rollback;
-      raise;
-    end;
-  finally
-    q.Free;
-    t.Free;
+    Query.ExecSQL;
+    Transaction.Commit;
+  except
+    Transaction.Rollback;
+    raise;
   end;
 end;
 
