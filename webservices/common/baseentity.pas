@@ -16,10 +16,10 @@ type
 
   TYPUDBaseEntity = class
   protected
-    function InsertSQL: String; abstract;
-    function UpdateSQL: String; abstract;
-    function DeleteSQL: String; abstract;
-    procedure SetupParams; abstract;
+    function InsertSQL: String; virtual; abstract;
+    function UpdateSQL: String; virtual; abstract;
+    function DeleteSQL: String; virtual; abstract;
+    procedure SetupParams; virtual; abstract;
   private
     FConnection: TSQLConnection;
     FId: Int64;
@@ -74,7 +74,7 @@ begin
     esInsert : Query.SQL.Text := InsertSQL;
     esUpdate : Query.SQL.Text := UpdateSQL;
     esDelete : Query.SQL.Text := DeleteSQL;
-    esBrowse := ;
+    esBrowse : ;
   end;
   SetupParams;
   try
