@@ -1,4 +1,4 @@
-unit teams;
+unit matchs;
 
 {$mode objfpc}{$H+}
 
@@ -9,28 +9,27 @@ uses
 
 type
 
-  { TYPUDTeam }
+  { TYPUDMatch }
 
-  TYPUDTeam = class(TYPUDBaseEntity)
+  TYPUDMatch = class(TYPUDBaseEntity)
   private
     FForName: string;
   public
     procedure Validate; override;
     procedure Save; override;
   published
-    property ForName: string read FForName write FForName;
   end;
 
 implementation
 
-{ TYPUDTeam }
+{ TYPUDMatch }
 
-procedure TYPUDTeam.Validate;
+procedure TYPUDMatch.Validate;
 begin
   inherited Validate;
 end;
 
-procedure TYPUDTeam.Save;
+procedure TYPUDMatch.Save;
 begin
   inherited Save;
 end;
