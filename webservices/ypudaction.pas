@@ -17,7 +17,7 @@ implementation
 
 procedure TYPUDAction.Get;
 begin
-  Write('Your content here ...');
+  Write('Your content here ... ');
 end;
 
 initialization

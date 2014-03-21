@@ -3,7 +3,7 @@ program ypudfs;
 {$mode objfpc}{$H+}
 
 uses
-  BrookApplication, ypudbrokers, ypudaction, players, baseentity, teams, matchs;
+  BrookApplication, ypudbrokers, playeraction;
 
 begin
   BrookApp.Run;

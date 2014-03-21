@@ -5,36 +5,44 @@ unit players;
 interface
 
 uses
-  SysUtils, baseentity;
+  dSQLdbBroker, dbutils, SysUtils;
 
 type
+  EYPUDException = class(Exception);
 
   { TYPUDPlayer }
 
-  TYPUDPlayer = class(TYPUDBaseEntity)
+  TYPUDPlayer = class
   private
     FForName: string;
   public
-    procedure Validate; override;
-    procedure Save; override;
+    procedure Validate;
   published
     property ForName: string read FForName write FForName;
   end;
 
+  { TYPUDPlayerOpf }
+
+  TYPUDPlayerOpf = class(specialize TdGSQLdbOpf<TYPUDPlayer>)
+  public
+    constructor Create; overload;
+  end;
+
 implementation
+
+{ TYPUDPlayerOpf }
+
+constructor TYPUDPlayerOpf.Create;
+begin
+  inherited Create(dbutils.con, 'players');
+end;
 
 { TYPUDPlayer }
 
 procedure TYPUDPlayer.Validate;
 begin
-  inherited Validate;
   if Trim(FForName) = '' then
     raise EYPUDException.Create('Name must not be empty.');
-end;
-
-procedure TYPUDPlayer.Save;
-begin
-  inherited Save;
 end;
 
 end.
