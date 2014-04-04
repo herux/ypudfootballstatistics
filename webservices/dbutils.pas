@@ -19,11 +19,13 @@ begin
   if not Assigned(_con) then
   begin
     _con := TdSQLdbConnector.Create(nil);
-    _con.Driver := 'mysql.5.6';
+    //_con.Logger.Active := True;
+    //_con.Logger.FileName := 'OUTPUT.LOG';
+    _con.Driver := 'postgresql';
     _con.Host := '127.0.0.1';
-    _con.Database := 'ypud';
-    _con.User := 'root';
-    _con.Password := 'suckarep';
+    _con.Database := 'dopf';
+    _con.User := 'admin';
+    _con.Password := 'admin';
   end;
   Result := _con;
 end;
